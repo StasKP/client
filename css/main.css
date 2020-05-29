@@ -1,0 +1,19 @@
+/*Кнопки при наведении*/
+.login_b:hover, .registration_b:hover, #logout:hover {
+    cursor: pointer;
+}
+
+/*Диалоговое окно*/
+dialog {
+    border: none;
+    min-height: 50px;
+    min-width: 350px;
+    border-radius: 25px;
+    text-align: center;
+    border: 3px solid black;
+}
+
+/*Затемненый фон при диалоговом окне*/
+dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.8);
+}

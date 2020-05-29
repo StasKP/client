@@ -1,0 +1,235 @@
+/*Тело сайта*/
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.center {
+    text-align: center;
+}
+
+/*Шапка сайта*/
+.header {
+    /*border: 1px solid black;*/
+    min-height: 50px;
+    max-height: 150px;
+    padding: 0.5%;
+    background: #5a84ff;
+    color: #f9f9ff;
+}
+
+/*Название сайта в шапке*/
+.logo-text {
+    position: absolute;
+    top: 2.5%;
+    font-size: 25px;
+    font-weight: bold;
+    font-style: italic;
+}
+
+/*Блоки в одну линию*/
+.inline {
+    display: inline-block;
+}
+
+/*Блок входа регистрации*/
+.l-r {
+    float: right;
+    font-size: 20px;
+    font-style: italic;
+}
+
+.login_b, .registration_b {
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.login_b:hover, .registration_b:hover {
+    cursor: pointer;
+    text-decoration: underline;
+    background: #f9f9ff;
+    color: #5a84ff;
+}
+
+/*Диалоговое окно*/
+dialog {
+    border: none;
+    min-height: 50px;
+    min-width: 350px;
+    border-radius: 50px;
+    text-align: center;
+}
+
+/*Затемненый фон придиалоговом окне*/
+dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+/*Кнопка закрытия диалогового окна*/
+.close {
+    width: 50px;
+    height: 50px;
+    font-size: 25px;
+    padding: 5px;
+    border-radius: 50px;
+    border: 5px solid #5a84ff;
+    margin-bottom: 15px;
+    text-align: center;
+    font-style: italic;
+    background: white;
+    font-weight: bolder;
+    position: absolute;
+    bottom: 0;
+    left: 80%;
+}
+
+.close:hover {
+    cursor: pointer;
+    background: #5a84ff;
+    color: #f9f9ff;
+}
+
+#form-reg, #form-auth {
+    text-align: center;
+}
+
+.inp-t {
+    min-width: 250px;
+    font-size: 25px;
+    padding: 5px;
+    border-radius: 50px;
+    border: none;
+    border-bottom: 5px solid #5a84ff;
+    margin-bottom: 15px;
+    text-align: center;
+    font-style: italic;
+    color: #5a84ff;
+}
+
+.inp-s {
+    min-width: 300px;
+    font-size: 25px;
+    padding: 5px;
+    border-radius: 50px;
+    border: none;
+    border-bottom: 5px solid #5a84ff;
+    margin-bottom: 15px;
+    text-align: center;
+    font-style: italic;
+    color: #5a84ff;
+}
+
+.inp-b {
+    min-width: 200px;
+    font-size: 25px;
+    padding: 5px;
+    border-radius: 15px;
+    border: 5px solid #5a84ff;
+    background: #5a84ff;
+    margin-bottom: 15px;
+    text-align: center;
+    font-style: italic;
+    color: #f9f9ff;
+    font-weight: bolder;
+}
+
+.inp-b:hover {
+    cursor: pointer;
+    color: #5a84ff;
+    background: #f9f9ff;
+}
+
+.h1_reg {
+    color: #3b5994;
+}
+
+.vpr {
+    font-size: 18px;
+    color: #3b5994;
+    font-weight: bold;
+}
+
+#butt-auth, #butt_reg {
+    text-decoration: underline;
+    font-style: italic;
+}
+
+#butt-auth:hover, #butt_reg:hover {
+    text-decoration: none;
+    cursor: pointer;
+
+}
+
+.footer {
+    min-height: 50px;
+    max-height: 150px;
+    padding: 0.5%;
+    background: #5a84ff;
+    color: #f9f9ff;
+    text-align: center;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 20% 60% 20%;
+    /*grid-gap: 2%;*/
+}
+
+.g2 {
+    border-left: #5a84ff 2px solid;
+    border-right: #5a84ff 2px solid;
+}
+
+.g2 > h1 {
+    text-align: center;
+    color: #5a84ff;
+}
+
+.g1, .g3 {
+    background: #dbedff;
+}
+
+#i1 {
+    max-height: 350px;
+    width: auto;
+    border-radius: 25px;
+}
+
+.text {
+    text-align: justify;
+    margin: 15px;
+    /*border: 1px solid black;*/
+}
+
+.message_reg_ok, .message_auth_ok {
+    font-style: italic;
+    color: #3b5994;
+    font-size: 25px;
+    font-weight: bold;
+    text-decoration: #5a84ff;
+    margin-bottom: 15px;
+}
+
+.error {
+    display: block;
+    color: #ff2320;
+}
+
+.b_menu {
+    left: 38%;
+    position: absolute;
+    top: -1%;
+}
+.general_menu > li {
+    display: inline-block;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+
+.general_menu > li:hover {
+    cursor: pointer;
+    text-decoration: underline;
+    background: #f9f9ff;
+    color: #5a84ff;
+}

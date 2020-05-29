@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ОЛО АО "Мокша"</title>
+<!--    <link rel="stylesheet" type="text/css" href="css/style.css">-->
+    <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap-grid.css">
+    <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap-reboot.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" type="text/css" href="css/drop_menu.css">
+</head>
+<body class="bg-success">
+    <div id="app">
+        <!--    Шапка-->
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark shadow-sm">
+            <div class="container">
+                <a class="navbar-brand" href="/">
+                    Санаторий "Мокша"
+                </a>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <!-- Right Side Of Navbar -->
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item un_auth">
+                            <a class="nav-link login_b">Вход</a>
+                        </li>
+                        <li class="nav-item un_auth">
+                            <a class="nav-link registration_b" id="registration_b">Регистрация</a>
+                        </li>
+                        <li class="nav-item dropdown ok_auth">
+                            <a id="navbarDropdown" class="nav-link dropdown-toggle nic" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                <span class="caret"></span>
+                            </a>
+
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" id="logout">
+                                    Выход
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!--        Диалоговое окно регистрации-->
+        <dialog id="reg">
+            <!--            Сообщение об успешной регистрации-->
+            <div class="message_reg_ok text-muted ok_auth">
+                Вы успешно зарегистрированны
+            </div>
+            <!-- Форма регистрации -->
+            <form id="form-reg">
+                <h1 class="h1 text-dark h1_reg">Регистрация</h1>
+
+                <!--                Имя-->
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <input type="text" name="first_name" id="first_name" placeholder="Имя" class="form-control" required autofocus>
+                        <small class="error e_first_name form-text text-danger"></small>
+                    </div>
+                </div>
+
+                <!--                Фамилия-->
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <input type="text" name="surname" id="surname" placeholder="Фамилия" class="form-control" required>
+                        <small class="error form-text text-danger e_surname"></small>
+                    </div>
+                </div>
+
+                <!--                E-mail-->
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <input type="email" name="email" id="email" placeholder="Электронная почта" class="form-control" required>
+                        <small  class="error form-text text-danger e_email"></small>
+                    </div>
+                </div>
+
+                <!--                Телефон-->
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <input type="tel" name="phone" id="phone" placeholder="Телефон" class="form-control" required>
+                        <small class="error form-text text-danger e_phone"></small>
+                    </div>
+                </div>
+
+                <!--                Вид лица-->
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <select class="form-control" id="is_corporate" name="is_corporate">
+                            <option value="1">Юридическое лицо</option>
+                            <option value="0">Физическое лицо</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!--                Наименование юр. лица-->
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <input type="text" name="corporate_name" id="corporate_name" placeholder="Наименование юр. лица" class="form-control">
+                        <small class="error form-text text-danger e_corporate_name"></small>
+                    </div>
+                </div>
+
+                <!--                Пароль-->
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <input type="password" name="password" id="password" placeholder="Пароль" class="form-control" required>
+                        <small class="error form-text text-danger e_password"></small>
+                    </div>
+                </div>
+
+                <!--                Повтор пароля-->
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <input type="password" name="password_repeat" id="password_repeat" placeholder="Повторите пароль" class="form-control" required>
+                        <small class="error form-text text-danger e_password_repeat"></small>
+                    </div>
+                </div>
+
+                <!--                Кнопка регисрации-->
+                <button type="submit" class="btn btn-primary" id="butt-reg">
+                    Зарегистрироваться
+                </button>
+            </form>
+            <div class="text-muted vpr">
+                Уже есть учетная запись?
+                <div id="butt-auth" class="d-inline-block text-primary login_b">
+                    Авторизуйтесь
+                </div>
+            </div>
+            <button id="close" class="btn btn-success">Закрыть</button>
+        </dialog>
+
+        <!--        Диалоговое окно авторизации-->
+        <dialog id="auth">
+            <!--                    Сообщение об успешной авторизации-->
+            <div class="message_auth_ok text-muted ok_auth">
+                Вы успешно авторизированы!
+            </div>
+
+            <!--                    Форма авторизации-->
+            <form id="form-auth">
+                <h1 class="h1 text-dark">Авторизация</h1>
+                <!--                        Email-->
+                <div class="form-group">
+<!--                    <label for="email" class="col-md-12 col-form-label text-md-left">E-Mail</label>-->
+
+                    <div class="col-md-12">
+                        <input type="email" name="email" placeholder="Электронная почта" class="form-control" required autofocus>
+                        <small class="error e_email form-text text-danger"></small>
+                    </div>
+                </div>
+
+                <!--                        Пароль-->
+                <div class="form-group">
+<!--                    <label for="password" class="col-md-12 col-form-label text-md-left">Пароль</label>-->
+
+                    <div class="col-md-12">
+                        <input type="password" name="password" placeholder="Пароль" class="form-control" required>
+                        <small class="error e_password form-text text-danger"></small>
+                    </div>
+                </div>
+
+                <!--                        Кнопка входа-->
+                <button type="submit" class="btn btn-primary" id="butt_auth">
+                    Войти
+                </button>
+            </form>
+
+            <div class="text-muted vpr">
+                Нет учетной записи?
+
+                <div id="butt_reg" class="d-inline-block registration_b text-primary ">
+                    Зарегистрируйтесь
+                </div>
+
+            </div>
+            <button class="btn btn-success closes">Закрыть</button>
+        </dialog>
+
+        <!-- Вертикальное меню -->
+        <ul id="accordion" class="accordion ul_drop_menu">
+            <li>
+                <div class="link"><i class="fa fa-database"></i>Категории номеров<i class="fa fa-chevron-down"></i></div>
+                <ul class="submenu ul_drop_menu">
+                    <li><a id="a_store_category" class="a_drop_menu ok_auth">Создать</a></li>
+                    <li><a id="a_update_category" class="a_drop_menu ok_auth">Редактировать</a></li>
+                    <li><a id="a_index_category" class="a_drop_menu">Посмотреть</a></li>
+                    <li><a id="a_delete_category" class="a_drop_menu ok_auth">Удалить</a></li>
+                </ul>
+            </li>
+            <li>
+                <div class="link"><i class="fa fa-code"></i>Статусы номеров<i class="fa fa-chevron-down"></i></div>
+                <ul class="submenu ul_drop_menu">
+                    <li><a id="a_store_status" class="a_drop_menu ok_auth">Создать</a></li>
+                    <li><a id="a_update_status" class="a_drop_menu ok_auth">Редактировать</a></li>
+                    <li><a id="a_index_status" class="a_drop_menu">Посмотреть</a></li>
+                    <li><a id="a_delete_status" class="a_drop_menu ok_auth">Удалить</a></li>
+                </ul>
+            </li>
+            <li>
+                <div class="link"><i class="fa fa-mobile"></i>Номера для проживания<i class="fa fa-chevron-down"></i></div>
+                <ul class="submenu ul_drop_menu">
+                    <li><a id="a_store_room" class="a_drop_menu ok_auth">Создать</a></li>
+                    <li><a id="a_update_room" class="a_drop_menu ok_auth">Редактировать</a></li>
+                    <li><a id="a_index_room" class="a_drop_menu">Посмотреть</a></li>
+                    <li><a id="a_delete_room" class="a_drop_menu ok_auth">Удалить</a></li>
+                </ul>
+            </li>
+            <li>
+                <div class="link"><i class="fa fa-globe"></i>Места в номере<i class="fa fa-chevron-down"></i></div>
+                <ul class="submenu ul_drop_menu">
+                    <li><a id="a_store_place" class="a_drop_menu ok_auth">Создать</a></li>
+                    <li><a id="a_update_place" class="a_drop_menu ok_auth">Редактировать</a></li>
+                    <li><a id="a_index_place" class="a_drop_menu">Посмотреть</a></li>
+                    <li><a id="a_delete_place" class="a_drop_menu ok_auth">Удалить</a></li>
+                </ul>
+            </li>
+            <li class="ok_auth">
+                <div class="link"><i class="fa fa-globe"></i>Карточки бронирования<i class="fa fa-chevron-down"></i></div>
+                <ul class="submenu ul_drop_menu">
+                    <li><a id="a_store_booking" class="a_drop_menu ok_auth">Создать</a></li>
+                    <li><a id="a_index_booking" class="a_drop_menu ok_auth">Посмотреть</a></li>
+                    <li><a id="a_ok_booking" class="a_drop_menu ok_auth">Подвердить</a></li>
+                    <li><a id="a_delete_booking" class="a_drop_menu ok_auth">Удалить</a></li>
+                    <li><a id="a_update_booking" class="a_drop_menu ok_auth">Редактировать</a></li>
+                </ul>
+            </li>
+        </ul>
+
+        <!--        Основной контейнер-->
+        <div class="container" style="margin-top: 5px;">
+            <div class="row justify-content-center">
+                <div class="col-md-12">
+                    <div class="card border-0">
+                        <div class="card-header bg-dark text-light">Санаторий "Мокша"</div>
+
+                        <div class="card-body">
+                            <div id="hello">
+                                Добро пожаловать!
+                            </div>
+
+                            <!--Сообщение об отсутствие прав администратора-->
+                            <form id="no_admin">
+                                <!--Сообщение об успешном создании категории номеров-->
+                                <div class="text-dark font-weight-bold" style="margin-bottom: 5px;">
+                                    Для совершения данной оперции у вас недостаточно прав!
+                                </div>
+
+                                <!--Кпока возвращения к форме создания категорий номеров-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <a href="/" class="btn btn-dark col-md-12 text-light">
+                                            На главную
+                                        </a>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!--============================================-->
+                            <!--                  Категории                 -->
+                            <!--============================================-->
+
+                            <!--Форма создания категорий-->
+                            <form id="form_store_category">
+                                <!--Название категории-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <input type="text" name="name_category" placeholder="Название категории" class="form-control" required autofocus>
+                                        <small class="error e_name_category form-text text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <!--Количество основных мест в номере-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <input type="number" name="number_of_main" placeholder="Количество основных мест в номере" class="form-control" required>
+                                        <small class="error e_number_of_main form-text text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <!--Количество дополнительных мест в номере-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <input type="number" name="number_of_additional" placeholder="Количество дополнительных мест в номере" class="form-control" required>
+                                        <small class="error e_number_of_additional form-text text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <!--Кпока создания категории номера-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn btn-dark col-md-12" id="store_category">
+                                            Создать
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!--Сообщение об успешном создании категории номера-->
+                            <form id="form_store_category_ok">
+                                <!--Сообщение об успешном создании категории номеров-->
+                                <div class="text-dark font-weight-bold" style="margin-bottom: 5px;">
+                                    Категория номера успешно создана!
+                                </div>
+
+                                <!--Кпока возвращения к форме создания категорий номеров-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn btn-dark col-md-12" id="back_store_category">
+                                            Вернуться к форме создания категорий номеров
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!--Таблица всех категорий-->
+                            <div id="div_category">
+                                <table class="table table-striped task-table">
+                                    <tbody id="tbody_category">
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!--Форма редактирования категорий-->
+                            <form id="form_update_category">
+                                <!--Название категории-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <input type="text" name="name_category" placeholder="Название категории" class="form-control" id="new_name_category" required autofocus>
+                                        <small class="error e_name_category form-text text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <!--Количество основных мест в номере-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <input type="number" name="number_of_main" placeholder="Количество основных мест в номере" class="form-control" id="new_number_of_main" required>
+                                        <small class="error e_number_of_main form-text text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <!--Количество дополнительных мест в номере-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <input type="number" name="number_of_additional" placeholder="Количество дополнительных мест в номере" class="form-control" id="new_number_of_additional" required>
+                                        <small class="error e_number_of_additional form-text text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <!--Кпока редактирования категории номера-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn btn-dark col-md-12" id="butt_update_category">
+                                            Сохранить изменения
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!--Сообщение об успешном изменении категории номера-->
+                            <form id="form_update_category_ok">
+                                <!--Сообщение об успешном изменении категории номеров-->
+                                <div class="text-dark font-weight-bold" style="margin-bottom: 5px;">
+                                    Категория номера успешно изменена!
+                                </div>
+
+                                <!--Кпока возвращения к списку редактируемых категорий номеров-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn btn-dark col-md-12" id="back_update_category">
+                                            Вернуться к списку редактируемых категорий номеров
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!--============================================-->
+                            <!--                  Статусы                   -->
+                            <!--============================================-->
+
+                            <!--Форма создания статуса номеров-->
+                            <form id="form_store_status">
+                                <!--Название статуса-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <input type="text" name="name_status" placeholder="Название статуса номера" class="form-control" required autofocus>
+                                        <small class="error e_name_status form-text text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <!--Кпока создания статуса номера-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn btn-dark col-md-12" id="store_status">
+                                            Создать
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!--Сообщение об успешном создании статуса номера-->
+                            <form id="form_store_status_ok">
+                                <!--Сообщение об успешном создании статутса номеров-->
+                                <div class="text-dark font-weight-bold" style="margin-bottom: 5px;">
+                                    Статус номера успешно создан!
+                                </div>
+
+                                <!--Кпока возвращения к форме создания статуса номеров-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn btn-dark col-md-12" id="back_store_status">
+                                            Вернуться к форме создания статуса номеров
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!--Таблица всех статусов-->
+                            <div id="div_status">
+                                <table class="table table-striped task-table">
+                                    <tbody id="tbody_status">
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!--Форма редактирования статуса-->
+                            <form id="form_update_status">
+                                <!--Название статуса-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <input type="text" name="name_status" placeholder="Название статуса" class="form-control" id="new_name_status" required autofocus>
+                                        <small class="error e_name_status form-text text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <!--Кпока редактирования статуса номера-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn btn-dark col-md-12" id="butt_update_status">
+                                            Сохранить изменения
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!--Сообщение об успешном изменении статуса номера-->
+                            <form id="form_update_status_ok">
+                                <!--Сообщение об успешном изменении статуса номеров-->
+                                <div class="text-dark font-weight-bold" style="margin-bottom: 5px;">
+                                    Статус номера успешно изменён!
+                                </div>
+
+                                <!--Кпока возвращения к списку редактируемых статусов номеров-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn btn-dark col-md-12" id="back_update_status">
+                                            Вернуться к списку редактируемых статусов номеров
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!--============================================-->
+                            <!--             Номера для проживания          -->
+                            <!--============================================-->
+
+                            <!--Форма создания номера для проживания-->
+                            <form id="form_store_room">
+                                <!--Название номера для проживания-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <input type="number" name="name_room" placeholder="Номер номера для проживания" class="form-control" required autofocus>
+                                        <small class="error e_name_room form-text text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <!--Категория номера для проживания-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <select class="form-control" name="category_room" id="select_category_room">
+
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!--Корпус номера для проживания-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <select class="form-control" name="corpus">
+                                            <option value="1">Первый корпус (I)</option>
+                                            <option value="2">Второй корпус (II)</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!--Этаж номера для проживания-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <input type="number" name="floor" placeholder="Этаж" class="form-control" required>
+                                        <small class="error e_floor form-text text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <!--Кпока создания номера для проживания-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn btn-dark col-md-12" id="store_room">
+                                            Создать
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!--Сообщение об успешном создании номера для проживания-->
+                            <form id="form_store_room_ok">
+                                <!--Сообщение об успешном создании номера для проживания-->
+                                <div class="text-dark font-weight-bold" style="margin-bottom: 5px;">
+                                    Номер для проживания успешно создан!
+                                </div>
+
+                                <!--Кпока возвращения к форме создания номера для проживания-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn btn-dark col-md-12" id="back_store_room">
+                                            Вернуться к форме создания номера для проживания
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!--Таблица всех номеров для проживания-->
+                            <div id="div_room">
+                                <table class="table table-striped task-table">
+                                    <tbody id="tbody_room">
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!--Форма редактирования номера для проживания-->
+                            <form id="form_update_room">
+                                <!--Название номера для проживания-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <input type="number" name="name_room" id="new_name_room" placeholder="Номер номера для проживания" class="form-control" required autofocus>
+                                        <small class="error e_name_room form-text text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <!--Категория номера для проживания-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <select class="form-control" name="category_room" id="select_category_room_update">
+
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!--Корпус номера для проживания-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <select class="form-control" name="corpus" id="new_corpus">
+                                            <option value="1">Первый корпус (I)</option>
+                                            <option value="2">Второй корпус (II)</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!--Этаж номера для проживания-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <input type="number" name="floor" id="new_floor" placeholder="Этаж" class="form-control" required>
+                                        <small class="error e_floor form-text text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <!--Кпока редактирования номера-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn btn-dark col-md-12" id="butt_update_room">
+                                            Сохранить изменения
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!--Сообщение об успешном изменении номера для проживания-->
+                            <form id="form_update_room_ok">
+                                <!--Сообщение об успешном изменении номера для проживания-->
+                                <div class="text-dark font-weight-bold" style="margin-bottom: 5px;">
+                                    Статус номера успешно изменён!
+                                </div>
+
+                                <!--Кпока возвращения к списку редактируемых номеров для проживания-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn btn-dark col-md-12" id="back_update_room">
+                                            Вернуться к списку редактируемых номеров для проживания
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!--============================================-->
+                            <!--             Места в номере                 -->
+                            <!--============================================-->
+
+                            <!--Форма создания мест в номере-->
+                            <form id="form_store_place">
+                                <!--Название места в номере-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <input type="number" name="name" placeholder="Номер места" class="form-control" required autofocus>
+                                        <small class="error e_name form-text text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <!--Номер номера в котором размещается место-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <select class="form-control" name="room_id" id="select_place_room">
+
+                                        </select>
+                                        <small class="error e_room_id form-text text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <!--Свободно/Занято-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <select class="form-control" name="is_empty">
+                                            <option value="0">Свободно</option>
+                                            <option value="1">Занято</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!--Основное/Дополнительное-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <select class="form-control" name="is_primary">
+                                            <option value="0">Основное</option>
+                                            <option value="1">Дополнительное</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!--Кпока создания места в номере-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn btn-dark col-md-12" id="store_place">
+                                            Создать
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!--Сообщение об успешном создании места в номере-->
+                            <form id="form_store_place_ok">
+                                <!--Сообщение об успешном создании места в номере-->
+                                <div class="text-dark font-weight-bold" style="margin-bottom: 5px;">
+                                    Место в номере успешно создано!
+                                </div>
+
+                                <!--Кпока возвращения к форме создания номера для проживания-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn btn-dark col-md-12" id="back_store_place">
+                                            Вернуться к форме создания мест в номере
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!--Таблица всех мест в номерах-->
+                            <div id="div_place">
+                                <table class="table table-striped task-table">
+                                    <tbody id="tbody_place">
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!--Форма редактирования места в номере-->
+                            <form id="form_update_place">
+                                <!--Название места в номере-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <input type="number" name="name" id="new_name" placeholder="Номер места" class="form-control" required autofocus>
+                                        <small class="error e_name form-text text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <!--Номер номера в котором размещается место-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <select class="form-control" name="room_id" id="select_place_room_update">
+
+                                        </select>
+                                        <small class="error e_room_id form-text text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <!--Свободно/Занято-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <select class="form-control" name="is_empty" id="new_is_empty">
+                                            <option value="0">Свободно</option>
+                                            <option value="1">Занято</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!--Основное/Дополнительное-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <select class="form-control" name="is_primary" id="new_is_primary">
+                                            <option value="0">Основное</option>
+                                            <option value="1">Дополнительное</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!--Кпока редактирования места в номере-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn btn-dark col-md-12" id="butt_update_place">
+                                            Сохранить изменения
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!--Сообщение об успешном изменении места в номере-->
+                            <form id="form_update_place_ok">
+                                <!--Сообщение об успешном изменении места в номере-->
+                                <div class="text-dark font-weight-bold" style="margin-bottom: 5px;">
+                                    Статус номера успешно изменён!
+                                </div>
+
+                                <!--Кпока возвращения к списку редактируемых мест в нмоерах-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn btn-dark col-md-12" id="back_update_place">
+                                            Вернуться к списку редактируемых номеров для проживания
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!--============================================-->
+                            <!--             Карточки бронирования          -->
+                            <!--============================================-->
+
+                            <!--Форма создания карточки бронирования-->
+                            <form id="form_store_booking">
+                                <!--Категория номера-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <select class="form-control" name="category_room" id="select_booking_category_room" autofocus>
+
+                                        </select>
+                                        <small class="error e_category_room form-text text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <!--Дата заселения-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <input type="text" class="form-control" name="start_date" id="start_date" placeholder="Дата заселения" onfocus="(this.type='date')">
+                                        <small class="error e_start_date form-text text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <!--Дата выселения-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <input type="text" class="form-control" name="end_date" id="end_date" placeholder="Дата выселения" onfocus="(this.type='date')">
+                                        <small class="error e_end_date form-text text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <!--Количество бронируемых мест-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <input type="number" class="form-control" name="places" id="places" placeholder="Количество бронируемых мест" required>
+                                        <small class="error e_places form-text text-danger"></small>
+                                        <small class="note form-text text-primary"></small>
+                                    </div>
+                                </div>
+
+                                <!--Номер бронирования-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <select class="form-control" name="room_id" id="select_room_id">
+
+                                        </select>
+                                        <small class="error e_room_id form-text text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <!--Кпока создания места в номере-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn btn-dark col-md-12" id="store_booking">
+                                            Создать
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!--Сообщение об успешном создании карточки бронирования-->
+                            <form id="form_store_booking_ok">
+                                <!--Сообщение об успешном создании карточки бронирования-->
+                                <div class="text-dark font-weight-bold" style="margin-bottom: 5px;">
+                                    Запрос на бронирование успешно создан!
+                                </div>
+
+                                <!--Кпока возвращения к форме создания карточки бронирования-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn btn-dark col-md-12" id="back_store_booking">
+                                            Вернуться к форме создания карточки бронирования
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!--Таблица всех карточек бронирования-->
+                            <div id="div_booking">
+                                <table class="table table-striped task-table">
+                                    <tbody id="tbody_booking">
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!--Форма создания карточки бронирования-->
+                            <form id="form_update_booking">
+                                <!--Категория номера-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <select class="form-control" name="category_room" id="select_booking_category_room_new" autofocus>
+
+                                        </select>
+                                        <small class="error e_category_room form-text text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <!--Дата заселения-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <input type="text" class="form-control" name="start_date" id="start_date_new" placeholder="Дата заселения" onfocus="(this.type='date')">
+                                        <small class="error e_start_date form-text text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <!--Дата выселения-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <input type="text" class="form-control" name="end_date" id="end_date_new" placeholder="Дата выселения" onfocus="(this.type='date')">
+                                        <small class="error e_end_date form-text text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <!--Количество бронируемых мест-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <input type="number" class="form-control" name="places" id="places_new" placeholder="Количество бронируемых мест" required>
+                                        <small class="error e_places form-text text-danger"></small>
+                                        <small class="note form-text text-primary"></small>
+                                    </div>
+                                </div>
+
+                                <!--Номер бронирования-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <select class="form-control" name="room_id" id="select_room_id_new">
+
+                                        </select>
+                                        <small class="error e_room_id form-text text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <!--Кпока создания места в номере-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn btn-dark col-md-12" id="update_booking">
+                                            Сохранить изменения
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!--Сообщение об успешном изменении карточки бронирования-->
+                            <form id="form_update_booking_ok">
+                                <!--Сообщение об успешном изменении карточки броинрования-->
+                                <div class="text-dark font-weight-bold" style="margin-bottom: 5px;">
+                                    Карточка бронирования успешно изменена!
+                                </div>
+
+                                <!--Кпока возвращения к списку редактируемых мест в нмоерах-->
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn btn-dark col-md-12" id="back_update_booking">
+                                            Вернуться к списку редактируемых карточек бронирования
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--    Подвал-->
+<!--        <nav class="navbar navbar-expand-md navbar-dark bg-dark shadow-sm">-->
+
+<!--        </nav>-->
+<!--        <footer id="footer" class="page-footer">-->
+<!--            <div class="footer-bottom">-->
+<!--                <div class="container">-->
+<!--                    <div class="row">-->
+<!--                        <p class="pull-left">Copyright © 2020</p>-->
+<!--                        <p class="pull-right">Крыгин Станислав</p>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </footer>-->
+    </div>
+    <script src="script/jquery-3.3.1.min.js"></script>
+    <script src="script/script.js"></script>
+    <script src="script/drop_menu.js"></script>
+    <script src="bootstrap/js/bootstrap.bundle.js"></script>
+    <script src="bootstrap/js/bootstrap.js"></script>
+</body>
+</html>
