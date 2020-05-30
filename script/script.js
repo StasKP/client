@@ -15,7 +15,7 @@ function hide_form() {
     $('#form_store_category_ok').hide();
     $('#div_category').hide();
     $('#form_update_category').hide();
-    $('#form_update_category_ok').hide();
+    // $('#form_update_category_ok').hide();
 
     //---------!
     // Статусы
@@ -25,7 +25,7 @@ function hide_form() {
     $('#form_store_status_ok').hide();
     $('#div_status').hide();
     $('#form_update_status').hide();
-    $('#form_update_status_ok').hide();
+    // $('#form_update_status_ok').hide();
 
     //-----------------------!
     // Номера для проживания
@@ -306,8 +306,9 @@ function update_category(id) {
         data: $('#form_update_category').serialize(),
         // Успешный запрос
         success: function (data){
-            // $('#form_update_category_ok').show();
+            // $('#modal_update_category').modal('hide');
             // $('#form_update_category').hide();
+            // index_category();
             localStorage.rel = 1;
             location.reload();
         },
@@ -350,6 +351,8 @@ function form_update_category(id) {
         // Успешный запрос
         success: function (data){
             hide_form();
+            $('#div_category').show();
+            $('#modal_update_category').modal('show');
             $('#form_update_category').show(1000);
             document.getElementById('new_name_category').value = data.name_category;                // Наименование категории
             document.getElementById('new_number_of_main').value = data.number_of_main;              // Количество основных мест
@@ -364,41 +367,6 @@ function form_update_category(id) {
     return false;
 };
 
-// Вывод списка редактируемых категорий
-function list_update_category(){
-    // Ajax запрос к серверу
-    $.ajax({
-        url: api_url+'category',
-        method: 'GET',
-        // Успешный запрос
-        success: function (data){
-            hide_form();
-            $('#div_category').show(1000);
-            $('#tbody_category').html(' ');
-            $.each(data, function (index, value) {
-                $('#tbody_category').append(
-                    `
-						    <tr>
-                                <td class="table-text">
-                                    <div>${value.name_category}</div>
-                                </td>
-                                <td>
-                                    <form class="float-right">
-                                        <button class="btn btn-outline-success" id="update_category_${value.id}">Редактировать</button>
-                                    </form>
-                                </td>                                
-                            </tr>                  	
-						`
-                );
-                $(`#update_category_${value.id}`).click(function () {
-                    form_update_category(value.id);
-                    return false;
-                });
-            });
-        }
-    });
-};
-
 // Функция удаления категорий
 function delete_category(id) {
     // Ajax запрос к серверу
@@ -408,7 +376,8 @@ function delete_category(id) {
         method: 'DELETE',
         // Успешный запрос
         success: function (data){
-            list_delete_category();
+            // list_delete_category();
+            index_category();
         },
         // Ошибка
         error: function (data) {
@@ -416,45 +385,14 @@ function delete_category(id) {
                 $('#no_admin').show();
                 $('#div_category').hide();
             };
+
+            if(data.status == 500){
+                $('#no_delete').modal('show');
+            };
         }
     });
     return false;
 }
-
-// Вывод списка удаляемых категорий
-function list_delete_category(){
-    // Ajax запрос к серверу
-    $.ajax({
-        url: api_url+'category',
-        method: 'GET',
-        // Успешный запрос
-        success: function (data){
-            hide_form();
-            $('#div_category').show(1000);
-            $('#tbody_category').html(' ');
-            $.each(data, function (index, value) {
-                $('#tbody_category').append(
-                    `
-						    <tr>
-                                <td class="table-text">
-                                    <div>${value.name_category}</div>
-                                </td>
-                                <td>
-                                    <form class="float-right">
-                                        <button class="btn btn-outline-danger" id="delete_category_${value.id}">Удалить</button>
-                                    </form>
-                                </td>                                
-                            </tr>                  	
-						`
-                );
-                $(`#delete_category_${value.id}`).click(function () {
-                    delete_category(value.id);
-                    return false;
-                });
-            });
-        }
-    });
-};
 
 // Вывод списка всех доступных категорий
 function index_category(){
@@ -478,7 +416,10 @@ function index_category(){
                         </th>      
                         <th class="table-hover">
                             <div>Количество дополнительных мест</div>
-                        </th>                         
+                        </th> 
+                        <th class="table-hover">
+                            
+                        </th>                        
                     </tr>
                 `
             );
@@ -494,10 +435,26 @@ function index_category(){
                                 </td>      
                                 <td class="table-text">
                                     <div class="text-center">${value.number_of_additional}</div>
-                                </td>                         
+                                </td> 
+                                <td>
+                                    <form class="float-right">
+                                        <button class="btn btn-outline-danger" id="delete_category_${value.id}"><i class="fa fa-trash-alt"></i></button>
+                                    </form>
+                                    <form class="float-right">
+                                        <button class="btn btn-outline-success" id="update_category_${value.id}"><i class="fa fa-edit"></i></button>
+                                    </form>
+                                </td>                        
                             </tr>                  	
 						`
                 );
+                $(`#delete_category_${value.id}`).click(function () {
+                    delete_category(value.id);
+                    return false;
+                });
+                $(`#update_category_${value.id}`).click(function () {
+                    form_update_category(value.id);
+                    return false;
+                });
             });
         }
     });
@@ -584,6 +541,8 @@ function form_update_status(id) {
         // Успешный запрос
         success: function (data){
             hide_form();
+            $('#div_status').show();
+            $('#modal_update_status').modal('show');
             $('#form_update_status').show(1000);
             document.getElementById('new_name_status').value = data.name_status;    // Наименование статуса
             $('#butt_update_status').click(function(){
@@ -596,41 +555,6 @@ function form_update_status(id) {
     return false;
 };
 
-// Вывод списка редактируемых статусов
-function list_update_status(){
-    // Ajax запрос к серверу
-    $.ajax({
-        url: api_url+'status',
-        method: 'GET',
-        // Успешный запрос
-        success: function (data){
-            hide_form();
-            $('#div_status').show(1000);
-            $('#tbody_status').html(' ');
-            $.each(data, function (index, value) {
-                $('#tbody_status').append(
-                    `
-						    <tr>
-                                <td class="table-text">
-                                    <div>${value.name_status}</div>
-                                </td>
-                                <td>
-                                    <form class="float-right">
-                                        <button class="btn btn-outline-success" id="update_status_${value.id}">Редактировать</button>
-                                    </form>
-                                </td>                                
-                            </tr>                  	
-						`
-                );
-                $(`#update_status_${value.id}`).click(function () {
-                    form_update_status(value.id);
-                    return false;
-                });
-            });
-        }
-    });
-};
-
 // Функция удаления статусов
 function delete_status(id) {
     // Ajax запрос к серверу
@@ -640,7 +564,8 @@ function delete_status(id) {
         method: 'DELETE',
         // Успешный запрос
         success: function (data){
-            list_delete_status();
+            // list_delete_status();
+            index_status();
         },
         // Ошибка
         error: function (data) {
@@ -648,45 +573,14 @@ function delete_status(id) {
                 $('#no_admin').show();
                 $('#div_status').hide();
             };
+
+            if(data.status == 500){
+                $('#no_delete').modal('show');
+            };
         }
     });
     return false;
 }
-
-// Вывод списка удаляемых статусов
-function list_delete_status(){
-    // Ajax запрос к серверу
-    $.ajax({
-        url: api_url+'status',
-        method: 'GET',
-        // Успешный запрос
-        success: function (data){
-            hide_form();
-            $('#div_status').show(1000);
-            $('#tbody_status').html(' ');
-            $.each(data, function (index, value) {
-                $('#tbody_status').append(
-                    `
-						    <tr>
-                                <td class="table-text">
-                                    <div>${value.name_status}</div>
-                                </td>
-                                <td>
-                                    <form class="float-right">
-                                        <button class="btn btn-outline-danger" id="delete_status_${value.id}">Удалить</button>
-                                    </form>
-                                </td>                                
-                            </tr>                  	
-						`
-                );
-                $(`#delete_status_${value.id}`).click(function () {
-                    delete_status(value.id);
-                    return false;
-                });
-            });
-        }
-    });
-};
 
 // Вывод списка всех доступных статусов
 function index_status(){
@@ -704,21 +598,39 @@ function index_status(){
                     <tr>
                         <th class="table-hover">
                             <div class="text-center">Наименование</div>
-                        </th>                        
+                        </th>   
+                        <th class="table-hover">
+                        
+                        </th>                     
                     </tr>
                 `
             );
             $.each(data, function (index, value) {
                 $('#tbody_status').append(
                     `
-						    <tr>
-                                
+						    <tr>                                
                                 <td class="table-text">
                                     <div class="text-center">${value.name_status}</div>
-                                </td>                                                      
+                                </td> 
+                                <td>
+                                    <form class="float-right">
+                                        <button class="btn btn-outline-danger" id="delete_status_${value.id}"><i class="fa fa-trash-alt"></i></button>
+                                    </form>
+                                    <form class="float-right">
+                                        <button class="btn btn-outline-success" id="update_status_${value.id}"><i class="fa fa-edit"></i></button>
+                                    </form>
+                                </td>                                                     
                             </tr>                  	
 						`
                 );
+                $(`#delete_status_${value.id}`).click(function () {
+                    delete_status(value.id);
+                    return false;
+                });
+                $(`#update_status_${value.id}`).click(function () {
+                    form_update_status(value.id);
+                    return false;
+                });
             });
         }
     });
@@ -738,7 +650,7 @@ function open_form_store_room(){
         success: function (data){
             hide_form();
             $('#form_store_room').show(1000);
-            $('#select_category_room').html();
+            $('#select_category_room').html(' ');
             $.each(data, function (index, value) {
                 $('#select_category_room').append(
                     `
@@ -788,56 +700,6 @@ function store_room() {
 
 };
 
-// Вывод списка редактируемых номеров для проживания
-function list_update_room(){
-    // Ajax запрос к серверу
-    $.ajax({
-        url: api_url+'room',
-        method: 'GET',
-        // Успешный запрос
-        success: function (data){
-            hide_form();
-            $('#div_room').show(1000);
-            $('#tbody_room').html(' ');
-            // Ajax запрос к серверу
-            $.ajax({
-                url: api_url+'category',
-                method: 'GET',
-                // Успешный запрос
-                success: function (data_1){
-                    var name_category = '';
-                    $.each(data, function (index, value) {
-                        $.each(data_1, function (index_1, value_1) {
-                            if (value.category_room == value_1.id){
-                                name_category = value_1.name_category;
-                            }
-                        });
-                        $('#tbody_room').append(
-                            `
-						    <tr>
-                                <td class="table-text">
-                                    <div>Номер: ${value.name_room}("${name_category}")</div>
-                                </td>
-                                <td>
-                                    <form class="float-right">
-                                        <button class="btn btn-outline-success" id="update_room_${value.id}">Редактировать</button>
-                                    </form>
-                                </td>                                
-                            </tr>                  	
-						`
-                        );
-                        $(`#update_room_${value.id}`).click(function () {
-                            form_update_room(value.id);
-                            return false;
-                        });
-                    });
-                }
-            });
-
-        }
-    });
-};
-
 // Функция открытия формы редактирования номера для проживания
 function form_update_room(id) {
     // Ajax запрос к серверу
@@ -847,6 +709,8 @@ function form_update_room(id) {
         // Успешный запрос
         success: function (data){
             hide_form();
+            $('#div_room').show();
+            $('#modal_update_room').modal('show');
             $('#form_update_room').show(1000);
             // Ajax запрос к серверу
             $.ajax({
@@ -918,57 +782,7 @@ function update_room(id) {
     return false;
 }
 
-// Вывод списка удаляемых статусов
-function list_delete_room(){
-    // Ajax запрос к серверу
-    $.ajax({
-        url: api_url+'room',
-        method: 'GET',
-        // Успешный запрос
-        success: function (data){
-            hide_form();
-            $('#div_room').show(1000);
-            $('#tbody_room').html(' ');
-            // Ajax запрос к серверу
-            $.ajax({
-                url: api_url+'category',
-                method: 'GET',
-                // Успешный запрос
-                success: function (data_1){
-                    var name_category = '';
-                    $.each(data, function (index, value) {
-                        $.each(data_1, function (index_1, value_1) {
-                            if (value.category_room == value_1.id){
-                                name_category = value_1.name_category;
-                            }
-                        });
-                        $('#tbody_room').append(
-                            `
-						    <tr>
-                                <td class="table-text">
-                                    <div>Номер: ${value.name_room}("${name_category}")</div>
-                                </td>
-                                <td>
-                                    <form class="float-right">
-                                        <button class="btn btn-outline-danger" id="delete_room_${value.id}">Удалить</button>
-                                    </form>
-                                </td>                                
-                            </tr>                  	
-						`
-                        );
-                        $(`#delete_room_${value.id}`).click(function () {
-                            delete_room(value.id);
-                            return false;
-                        });
-                    });
-                }
-            });
-
-        }
-    });
-};
-
-// Функция удаления статусов
+// Функция удаления номера для проживания
 function delete_room(id) {
     // Ajax запрос к серверу
     $.ajax({
@@ -977,13 +791,18 @@ function delete_room(id) {
         method: 'DELETE',
         // Успешный запрос
         success: function (data){
-            list_delete_room();
+            // list_delete_room();
+            index_room();
         },
         // Ошибка
         error: function (data) {
             if(data.status == 403){
                 $('#no_admin').show();
                 $('#div_room').hide();
+            };
+
+            if(data.status == 500){
+                $('#no_delete').modal('show');
             };
         }
     });
@@ -1022,7 +841,10 @@ function index_room(){
                             </th>  
                             <th class="table-hover">
                                 <div class="text-center">Этаж</div>
-                            </th>                        
+                            </th>  
+                            <th class="table-hover">
+                                
+                            </th>                      
                         </tr>
                     `
                     );
@@ -1046,10 +868,26 @@ function index_room(){
                                 </td>
                                 <td class="table-text">
                                     <div class="text-center">${value.floor}</div>
+                                </td> 
+                                <td class="table-text">
+                                    <form class="float-right">
+                                        <button class="btn btn-outline-danger" id="delete_room_${value.id}"><i class="fa fa-trash-alt"></i></button>
+                                    </form>
+                                    <form class="float-right">
+                                        <button class="btn btn-outline-success" id="update_room_${value.id}"><i class="fa fa-edit"></i></button>
+                                    </form>
                                 </td>                             
                             </tr>                  	
 						`
                         );
+                        $(`#delete_room_${value.id}`).click(function () {
+                            delete_room(value.id);
+                            return false;
+                        });
+                        $(`#update_room_${value.id}`).click(function () {
+                            form_update_room(value.id);
+                            return false;
+                        });
                     });
                 }
             });
@@ -1128,53 +966,6 @@ function store_place() {
     }
 };
 
-// Вывод списка редактируемых мест в номерах для проживания
-function list_update_place(){
-    // Ajax запрос к серверу
-    $.ajax({
-        url: api_url+'room',
-        method: 'GET',
-        // Успешный запрос
-        success: function (data){
-            hide_form();
-            $('#div_place').show(1000);
-            $('#tbody_place').html(' ');
-            $.each(data, function (index, value) {
-                room_id_update = value.id;
-                // Ajax запрос к серверу
-                $.ajax({
-                    url: api_url + 'room/' + room_id_update + '/place',
-                    method: 'GET',
-                    // Успешный запрос
-                    success: function (data_1) {
-                        var name_category = '';
-                        $.each(data_1, function (index_1, value_1) {
-                            $('#tbody_place').append(
-                                `
-                                    <tr>
-                                        <td class="table-text">
-                                            <div>Место - ${value_1.name} в номере - ${value.name_room}</div>
-                                        </td>
-                                        <td>
-                                            <form class="float-right">
-                                                <button class="btn btn-outline-success" id="update_place_${value_1.id}">Редактировать</button>
-                                            </form>
-                                        </td>                                
-                                    </tr>                  	
-						        `
-                            );
-                            $(`#update_place_${value_1.id}`).click(function () {
-                                form_update_place(value_1.id, value.id);
-                                return false;
-                            });
-                        });
-                    }
-                });
-            })
-        }
-    });
-};
-
 // Функция открытия формы редактирования места в номере для проживания
 function form_update_place(id, room_id) {
     // Ajax запрос к серверу
@@ -1184,6 +975,8 @@ function form_update_place(id, room_id) {
         // Успешный запрос
         success: function (data){
             hide_form();
+            $('#div_place').show();
+            $('#modal_update_place').modal('show');
             $('#form_update_place').show(1000);
             // Ajax запрос к серверу
             $.ajax({
@@ -1294,10 +1087,26 @@ function index_place(){
                                         </td> 
                                         <td>
                                             <div id="primary_${value_1.id}"></div>
-                                        </td>                               
+                                        </td>                                        
+                                        <td>
+                                            <form class="float-right">
+                                                <button class="btn btn-outline-danger" id="delete_place_${value_1.id}"><i class="fa fa-trash-alt"></i></button>
+                                            </form>
+                                            <form class="float-right">
+                                                <button class="btn btn-outline-success" id="update_place_${value_1.id}"><i class="fa fa-edit"></i></button>
+                                            </form>
+                                        </td>                          
                                     </tr>                  	
 						        `
                             );
+                            $(`#update_place_${value_1.id}`).click(function () {
+                                form_update_place(value_1.id, value.id);
+                                return false;
+                            });
+                            $(`#delete_place_${value_1.id}`).click(function () {
+                                delete_place(value_1.id, value.id);
+                                return false;
+                            });
                             if (value_1.is_empty == 1){
                                 $(`#empty_${value_1.id}`).append(`Занято`);
                             }
@@ -1318,53 +1127,6 @@ function index_place(){
     });
 }
 
-// Вывод списка удаляемых мест в номерах для проживания
-function list_delete_place(){
-    // Ajax запрос к серверу
-    $.ajax({
-        url: api_url+'room',
-        method: 'GET',
-        // Успешный запрос
-        success: function (data){
-            hide_form();
-            $('#div_place').show(1000);
-            $('#tbody_place').html(' ');
-            $.each(data, function (index, value) {
-                room_id_update = value.id;
-                // Ajax запрос к серверу
-                $.ajax({
-                    url: api_url + 'room/' + room_id_update + '/place',
-                    method: 'GET',
-                    // Успешный запрос
-                    success: function (data_1) {
-                        var name_category = '';
-                        $.each(data_1, function (index_1, value_1) {
-                            $('#tbody_place').append(
-                                `
-                                    <tr>
-                                        <td class="table-text">
-                                            <div>Место - ${value_1.name} в номере - ${value.name_room}</div>
-                                        </td>
-                                        <td>
-                                            <form class="float-right">
-                                                <button class="btn btn-outline-danger" id="delete_place_${value_1.id}">Удалить</button>
-                                            </form>
-                                        </td>                                
-                                    </tr>                  	
-						        `
-                            );
-                            $(`#delete_place_${value_1.id}`).click(function () {
-                                delete_place(value_1.id, value.id);
-                                return false;
-                            });
-                        });
-                    }
-                });
-            })
-        }
-    });
-};
-
 // Функция удаления мест в номерах для проживания
 function delete_place(id, room_id) {
     // Ajax запрос к серверу
@@ -1374,13 +1136,18 @@ function delete_place(id, room_id) {
         method: 'DELETE',
         // Успешный запрос
         success: function (data){
-            list_delete_place();
+            //list_delete_place();
+            index_place();
         },
         // Ошибка
         error: function (data) {
             if(data.status == 403){
                 $('#no_admin').show();
                 $('#div_place').hide();
+            };
+
+            if(data.status == 500){
+                $('#no_delete').modal('show');
             };
         }
     });
@@ -1557,11 +1324,24 @@ function index_booking(){
                         </th>
                         <th class="table-hover">
                             <div class="text-center">Подтверждён/Неподтверждён</div>
-                        </th>                       
+                        </th> 
+                        <th class="table-hover">
+                            
+                        </th>                      
                     </tr>
                 `
             );
             $.each(data, function (index, value) {
+                var options = {
+                    year: 'numeric',
+                    month: 'numeric',
+                    day: 'numeric',
+                    timezone: 'UTC'
+                };
+                d = new Date(value.start_date);
+                d1 = d.getDate()+'.'+(d.getMonth()+1)+'.'+d.getFullYear();
+                de = new Date(value.end_date);
+                de1 = de.getDate()+'.'+(de.getMonth()+1)+'.'+de.getFullYear();
                 $('#tbody_booking').append(
                     `
                         <tr>
@@ -1585,159 +1365,13 @@ function index_booking(){
                         
                             <td>
                                 <div class="text-center">
-                                    ${value.start_date}
+                                    ${d1}
                                 </div>
                             </td>
                         
                             <td>
                                 <div class="text-center">
-                                    ${value.end_date}
-                                </div>
-                            </td>
-                       
-                            <td>
-                                <div class="text-center">
-                                    ${value.places}
-                                </div>
-                            </td>
-                        
-                            <td>
-                                <div class="text-center" id="booking_room_id_${value.id}">
-                                    
-                                </div>
-                            </td>
-                        
-                            <td>
-                                <div class="text-center" id="booking_status_${value.id}">
-                                    
-                                </div>
-                            </td>
-                        </tr>
-                    `
-                );
-                $.ajax({
-                    url: api_url+'room',
-                    method: 'GET',
-                    success: function (data_1) {
-                        $.each(data_1, function (index_1, value_1) {
-                            if (value.room_id == value_1.id) {
-                                $(`#booking_room_id_${value.id}`).append(`${value_1.name_room}`);
-                            }
-                        })
-                    }
-                });
-                $.ajax({
-                    url: api_url+'category',
-                    method: 'GET',
-                    success: function (data_1) {
-                        $.each(data_1, function (index_1, value_1) {
-                            if (value.category_room == value_1.id) {
-                                $(`#booking_category_${value.id}`).append(`${value_1.name_category}`);
-                            }
-                        })
-                    }
-                });
-                $.ajax({
-                    url: api_url+'user/'+value.client,
-                    headers: {'Authorization': 'Bearer ' + localStorage.token},
-                    method: 'GET',
-                    success: function (data_1) {
-                        $(`#booking_client_${value.id}`).append(`${data_1.client}`);
-                    }
-                })
-                if (value.booking_status == 0) {
-                    $(`#booking_status_${value.id}`).append(`Не подтвержден`);
-                } else {
-                    $(`#booking_status_${value.id}`).append(`Подтвержден`);
-                }
-            })
-        },
-        // Ошибка
-        error: function (data) {
-            if(data.status == 403){
-                $('#no_admin').show();
-                $('#div_place').hide();
-            };
-        }
-    });
-}
-
-// Вывод списка всех карточек бронирования на подверждение
-function list_ok_booking(){
-    // Ajax запрос к серверу
-    $.ajax({
-        url: api_url +'booking',
-        headers: {'Authorization': 'Bearer ' + localStorage.token},
-        method: 'GET',
-        success: function (data) {
-            hide_form();
-            $('#div_booking').show(1000);
-            $('#tbody_booking').html(' ');
-            $('#tbody_booking').append(
-                `
-                    <tr>
-                        <th class="table-hover">
-                            <div class="text-center">№</div>
-                        </th> 
-                        <th class="table-hover">
-                            <div>Клиент</div>
-                        </th> 
-                        <th class="table-hover">
-                             <div>Категория</div>
-                        </th>  
-                        <th class="table-hover">
-                             <div class="text-center">Дата заселения</div>
-                        </th>
-                        <th class="table-hover">
-                              <div class="text-center">Дата выселения</div>
-                        </th>  
-                        <th class="table-hover">
-                            <div class="text-center">Кол-во мест</div>
-                        </th> 
-                        <th class="table-hover">
-                            <div class="text-center">Номер комнаты</div>
-                        </th>
-                        <th class="table-hover">
-                            <div class="text-center">Подтверждён/Неподтверждён</div>
-                        </th>    
-                        <th class="table-hover">
-                            <div class="text-center"></div>
-                        </th>                   
-                    </tr>
-                `
-            );
-            $.each(data, function (index, value) {
-                if (value.booking_status == 0) {
-                    $('#tbody_booking').append(
-                        `
-                        <tr>
-                            <td>
-                                <div class="text-center">
-                                    ${value.id}
-                                </div>
-                            </td>
-                        
-                            <td>
-                                <div class="text-center" id="booking_client_${value.id}">
-                                    
-                                </div>
-                            </td>
-                        
-                            <td>
-                                <div class="text-center" id="booking_category_${value.id}">
-                                    
-                                </div>
-                            </td>
-                        
-                            <td>
-                                <div class="text-center">
-                                    ${value.start_date}
-                                </div>
-                            </td>
-                        
-                            <td>
-                                <div class="text-center">
-                                    ${value.end_date}
+                                    ${de1}
                                 </div>
                             </td>
                        
@@ -1751,7 +1385,6 @@ function list_ok_booking(){
                                 <div class="text-center" id="booking_room_id_${value.id}">
                                     <small class="error e_room_id_${value.id} form-text text-danger"></small>
                                 </div>
-                                
                             </td>
                         
                             <td>
@@ -1760,16 +1393,29 @@ function list_ok_booking(){
                                 </div>
                             </td>
                             <td>
+                                <form class="float-right" id="booking_check_${value.id}">
+                                    <button class="btn btn-outline-primary" id="ok_booking_${value.id}"><i class="fa fa-check"></i>  Подтвердить</button>
+                                </form>
                                 <form class="float-right">
-                                    <button class="btn btn-outline-primary" id="ok_booking_${value.id}">Подтвердить</button>
+                                    <button class="btn btn-outline-danger" id="delete_booking_${value.id}"><i class="fa fa-trash-alt"></i></button>
+                                </form>
+                                <form class="float-right">
+                                    <button class="btn btn-outline-success" id="update_booking_${value.id}"><i class="fa fa-edit"></i></button>
                                 </form>
                             </td>
                         </tr>
                     `
-                    );
-                }
+                );
                 $(`#ok_booking_${value.id}`).click(function () {
                     ok_booking(value.id);
+                    return false;
+                });
+                $(`#delete_booking_${value.id}`).click(function () {
+                    delete_booking(value.id);
+                    return false;
+                });
+                $(`#update_booking_${value.id}`).click(function () {
+                    form_update_booking(value.id);
                     return false;
                 });
                 $.ajax({
@@ -1804,8 +1450,10 @@ function list_ok_booking(){
                 })
                 if (value.booking_status == 0) {
                     $(`#booking_status_${value.id}`).append(`Не подтвержден`);
+                    $(`#booking_check_${value.id}`).show();
                 } else {
                     $(`#booking_status_${value.id}`).append(`Подтвержден`);
+                    $(`#booking_check_${value.id}`).hide();
                 }
             })
         },
@@ -1828,7 +1476,8 @@ function ok_booking(id) {
         method: 'PATCH',
         // Успешный запрос
         success: function (data){
-            list_ok_booking();
+            // list_ok_booking();
+            index_booking();
         },
         // Ошибка
         error: function (data) {
@@ -1851,163 +1500,6 @@ function ok_booking(id) {
     return false;
 }
 
-// Вывод списка всех карточек бронирования на удаление
-function list_delete_booking(){
-    // Ajax запрос к серверу
-    $.ajax({
-        url: api_url +'booking',
-        headers: {'Authorization': 'Bearer ' + localStorage.token},
-        method: 'GET',
-        success: function (data) {
-            hide_form();
-            $('#div_booking').show(1000);
-            $('#tbody_booking').html(' ');
-            $('#tbody_booking').append(
-                `
-                    <tr>
-                        <th class="table-hover">
-                            <div class="text-center">№</div>
-                        </th> 
-                        <th class="table-hover">
-                            <div>Клиент</div>
-                        </th> 
-                        <th class="table-hover">
-                             <div>Категория</div>
-                        </th>  
-                        <th class="table-hover">
-                             <div class="text-center">Дата заселения</div>
-                        </th>
-                        <th class="table-hover">
-                              <div class="text-center">Дата выселения</div>
-                        </th>  
-                        <th class="table-hover">
-                            <div class="text-center">Кол-во мест</div>
-                        </th> 
-                        <th class="table-hover">
-                            <div class="text-center">Номер комнаты</div>
-                        </th>
-                        <th class="table-hover">
-                            <div class="text-center">Подтверждён/Неподтверждён</div>
-                        </th>    
-                        <th class="table-hover">
-                            <div class="text-center"></div>
-                        </th>                   
-                    </tr>
-                `
-            );
-            $.each(data, function (index, value) {
-
-                    $('#tbody_booking').append(
-                        `
-                        <tr>
-                            <td>
-                                <div class="text-center">
-                                    ${value.id}
-                                </div>
-                            </td>
-                        
-                            <td>
-                                <div class="text-center" id="booking_client_${value.id}">
-                                    
-                                </div>
-                            </td>
-                        
-                            <td>
-                                <div class="text-center" id="booking_category_${value.id}">
-                                    
-                                </div>
-                            </td>
-                        
-                            <td>
-                                <div class="text-center">
-                                    ${value.start_date}
-                                </div>
-                            </td>
-                        
-                            <td>
-                                <div class="text-center">
-                                    ${value.end_date}
-                                </div>
-                            </td>
-                       
-                            <td>
-                                <div class="text-center">
-                                    ${value.places}
-                                </div>
-                            </td>
-                        
-                            <td>
-                                <div class="text-center" id="booking_room_id_${value.id}">
-                                    <small class="error e_room_id_${value.id} form-text text-danger"></small>
-                                </div>
-                                
-                            </td>
-                        
-                            <td>
-                                <div class="text-center" id="booking_status_${value.id}">
-                                    
-                                </div>
-                            </td>
-                            <td>
-                                <form class="float-right">
-                                    <button class="btn btn-outline-danger" id="delete_booking_${value.id}">Удалить</button>
-                                </form>
-                            </td>
-                        </tr>
-                    `
-                    );
-
-                $(`#delete_booking_${value.id}`).click(function () {
-                    delete_booking(value.id);
-                    return false;
-                });
-                $.ajax({
-                    url: api_url+'room',
-                    method: 'GET',
-                    success: function (data_1) {
-                        $.each(data_1, function (index_1, value_1) {
-                            if (value.room_id == value_1.id) {
-                                $(`#booking_room_id_${value.id}`).append(`${value_1.name_room}`);
-                            }
-                        })
-                    }
-                });
-                $.ajax({
-                    url: api_url+'category',
-                    method: 'GET',
-                    success: function (data_1) {
-                        $.each(data_1, function (index_1, value_1) {
-                            if (value.category_room == value_1.id) {
-                                $(`#booking_category_${value.id}`).append(`${value_1.name_category}`);
-                            }
-                        })
-                    }
-                });
-                $.ajax({
-                    url: api_url+'user/'+value.client,
-                    headers: {'Authorization': 'Bearer ' + localStorage.token},
-                    method: 'GET',
-                    success: function (data_1) {
-                        $(`#booking_client_${value.id}`).append(`${data_1.client}`);
-                    }
-                })
-                if (value.booking_status == 0) {
-                    $(`#booking_status_${value.id}`).append(`Не подтвержден`);
-                } else {
-                    $(`#booking_status_${value.id}`).append(`Подтвержден`);
-                }
-            })
-        },
-        // Ошибка
-        error: function (data) {
-            if(data.status == 403){
-                $('#no_admin').show();
-                $('#div_place').hide();
-            };
-        }
-    });
-}
-
 // Функция удаления карточек бронирования
 function delete_booking(id) {
     // Ajax запрос к серверу
@@ -2017,7 +1509,8 @@ function delete_booking(id) {
         method: 'DELETE',
         // Успешный запрос
         success: function (data){
-            list_delete_booking();
+            // list_delete_booking();
+            index_booking();
         },
         // Ошибка
         error: function (data) {
@@ -2032,164 +1525,6 @@ function delete_booking(id) {
     return false;
 }
 
-// Вывод списка всех карточек бронирования на редактирование
-function list_update_booking(){
-    // Ajax запрос к серверу
-    $.ajax({
-        url: api_url +'booking',
-        headers: {'Authorization': 'Bearer ' + localStorage.token},
-        method: 'GET',
-        success: function (data) {
-            hide_form();
-            $('#div_booking').show(1000);
-            $('#tbody_booking').html(' ');
-            $('#tbody_booking').append(
-                `
-                    <tr>
-                        <th class="table-hover">
-                            <div class="text-center">№</div>
-                        </th> 
-                        <th class="table-hover">
-                            <div>Клиент</div>
-                        </th> 
-                        <th class="table-hover">
-                             <div>Категория</div>
-                        </th>  
-                        <th class="table-hover">
-                             <div class="text-center">Дата заселения</div>
-                        </th>
-                        <th class="table-hover">
-                              <div class="text-center">Дата выселения</div>
-                        </th>  
-                        <th class="table-hover">
-                            <div class="text-center">Кол-во мест</div>
-                        </th> 
-                        <th class="table-hover">
-                            <div class="text-center">Номер комнаты</div>
-                        </th>
-                        <th class="table-hover">
-                            <div class="text-center">Подтверждён/Неподтверждён</div>
-                        </th>    
-                        <th class="table-hover">
-                            <div class="text-center"></div>
-                        </th>                   
-                    </tr>
-                `
-            );
-            $.each(data, function (index, value) {
-
-                $('#tbody_booking').append(
-                    `
-                        <tr>
-                            <td>
-                                <div class="text-center">
-                                    ${value.id}
-                                </div>
-                            </td>
-                        
-                            <td>
-                                <div class="text-center" id="booking_client_${value.id}">
-                                    
-                                </div>
-                            </td>
-                        
-                            <td>
-                                <div class="text-center" id="booking_category_${value.id}">
-                                    
-                                </div>
-                            </td>
-                        
-                            <td>
-                                <div class="text-center">
-                                    ${value.start_date}
-                                </div>
-                            </td>
-                        
-                            <td>
-                                <div class="text-center">
-                                    ${value.end_date}
-                                </div>
-                            </td>
-                       
-                            <td>
-                                <div class="text-center">
-                                    ${value.places}
-                                </div>
-                            </td>
-                        
-                            <td>
-                                <div class="text-center" id="booking_room_id_${value.id}">
-                                    <small class="error e_room_id_${value.id} form-text text-danger"></small>
-                                </div>
-                                
-                            </td>
-                        
-                            <td>
-                                <div class="text-center" id="booking_status_${value.id}">
-                                    
-                                </div>
-                            </td>
-                            <td>
-                                <form class="float-right">
-                                    <button class="btn btn-outline-success" id="update_booking_${value.id}">Редактировать</button>
-                                </form>
-                            </td>
-                        </tr>
-                    `
-                );
-
-                $(`#update_booking_${value.id}`).click(function () {
-                    form_update_booking(value.id);
-                    return false;
-                });
-                $.ajax({
-                    url: api_url+'room',
-                    method: 'GET',
-                    success: function (data_1) {
-                        $(`#booking_room_id_${value.id}`).html();
-                        $.each(data_1, function (index_1, value_1) {
-                            if (value.room_id == value_1.id) {
-                                $(`#booking_room_id_${value.id}`).append(`${value_1.name_room}`);
-                            }
-                        })
-                    }
-                });
-                $.ajax({
-                    url: api_url+'category',
-                    method: 'GET',
-                    success: function (data_1) {
-                        $.each(data_1, function (index_1, value_1) {
-                            if (value.category_room == value_1.id) {
-                                $(`#booking_category_${value.id}`).append(`${value_1.name_category}`);
-                            }
-                        })
-                    }
-                });
-                $.ajax({
-                    url: api_url+'user/'+value.client,
-                    headers: {'Authorization': 'Bearer ' + localStorage.token},
-                    method: 'GET',
-                    success: function (data_1) {
-                        $(`#booking_client_${value.id}`).append(`${data_1.client}`);
-                    }
-                })
-                if (value.booking_status == 0) {
-                    $(`#booking_status_${value.id}`).append(`Не подтвержден`);
-                } else {
-                    $(`#booking_status_${value.id}`).append(`Подтвержден`);
-                }
-            })
-        },
-        // Ошибка
-        error: function (data) {
-            if(data.status == 403){
-                $('#no_admin').show();
-                $('#div_place').hide();
-            };
-        }
-    });
-}
-
 // Функция открытия формы редактирования карточки бронирования
 function form_update_booking(id) {
     // Ajax запрос к серверу
@@ -2200,6 +1535,8 @@ function form_update_booking(id) {
         // Успешный запрос
         success: function (data){
             hide_form();
+            $('#div_booking').show();
+            $('#modal_update_booking').modal('show');
             $('#form_update_booking').show(1000);
             // Ajax запрос к серверу
             $.ajax({
@@ -2208,6 +1545,8 @@ function form_update_booking(id) {
                 // Успешный запрос
                 success: function (data_1) {
                     hide_form();
+                    $('#div_booking').show();
+                    $('#modal_update_booking').modal('show');
                     $('#form_update_booking').show();
                     $('#select_booking_category_room_new').html(
                         `
@@ -2409,35 +1748,36 @@ $(document).ready(function () {
     // Если перезагрузка страницы выполнена после редактирования категории
     if (localStorage.rel == 1){
         hide_form();
-        $('#form_update_category_ok').show();
+        index_category();
+        // $('#form_update_category_ok').show();
         localStorage.rel = 0;
     }
 
     // Если перезагрузка страницы выполнена после редактирования статуса
     if (localStorage.rel == 2){
         hide_form();
-        $('#form_update_status_ok').show();
+        index_status();
         localStorage.rel = 0;
     }
 
     // Если перезагрузка страницы выполнена после редактирования номера для проживания
     if (localStorage.rel == 3){
         hide_form();
-        $('#form_update_room_ok').show();
+        index_room();
         localStorage.rel = 0;
     }
 
     // Если перезагрузка страницы выполнена после редактирования места в номере для проживания
     if (localStorage.rel == 4){
         hide_form();
-        $('#form_update_place_ok').show();
+        index_place();
         localStorage.rel = 0;
     }
 
     // Если перезагрузка страницы выполнена после редактирования карточки бронирования
     if (localStorage.rel == 5){
         hide_form();
-        $('#form_update_booking_ok').show();
+        index_booking();
         localStorage.rel = 0;
     }
 
@@ -2510,29 +1850,6 @@ $(document).ready(function () {
         return false;
     });
 
-    // При нажатии на ссылку редактировать категории
-    $('#a_update_category').click(function(){
-        $('.card-header').html('Редактирование категорий номеров');
-        list_update_category();
-    });
-
-    // Возращение к списпу редактируемых категорий номеров
-    $('#back_update_category').click(function(){
-
-        localStorage.rel = 0;
-        $('#form_update_category_ok').hide();
-        list_update_category();
-        return false;
-    });
-
-    // При нажатии на ссылку удаления категорий
-    $('#a_delete_category').click(function(){
-        $('.card-header').html('Удаление категорий номеров');
-        hide_form();
-        list_delete_category();
-        return false;
-    });
-
     // При нажатии на ссылку получения категорий
     $('#a_index_category').click(function(){
         $('.card-header').html('Все доступные категории номеров');
@@ -2540,6 +1857,11 @@ $(document).ready(function () {
         index_category();
         return false;
     });
+
+    $('.close_modal_category').click(function () {
+        localStorage.rel = 1;
+        location.reload();
+    })
 
 //=================================================
 // ---------------------------------------Статусы
@@ -2570,35 +1892,17 @@ $(document).ready(function () {
         return false;
     });
 
-    // При нажатии на ссылку редактировать статус
-    $('#a_update_status').click(function(){
-        $('.card-header').html('Редактирование статусов номеров');
-        list_update_status();
-    });
-
-    // Возращение к списпу редактируемых статусов номеров
-    $('#back_update_status').click(function(){
-
-        localStorage.rel = 0;
-        $('#form_update_status_ok').hide();
-        list_update_status();
-        return false;
-    });
-
-    // При нажатии на ссылку удаления статуса
-    $('#a_delete_status').click(function(){
-        $('.card-header').html('Удаление статусов номеров');
-        hide_form();
-        list_delete_status();
-        return false;
-    });
-
     // При нажатии на ссылку получения статусов
     $('#a_index_status').click(function(){
         $('.card-header').html('Все доступные статусы номеров');
         hide_form();
         index_status();
         return false;
+    })
+
+    $('.close_modal_status').click(function () {
+        localStorage.rel = 2;
+        location.reload();
     })
 
 //=================================================
@@ -2630,35 +1934,17 @@ $(document).ready(function () {
         return false;
     });
 
-    // При нажатии на ссылку редактировать номера для проживания
-    $('#a_update_room').click(function(){
-        $('.card-header').html('Редактирование номеров для проживания');
-        list_update_room();
-    });
-
-    // Возращение к списпу редактируемых номеров для проживания
-    $('#back_update_room').click(function(){
-
-        localStorage.rel = 0;
-        $('#form_update_room_ok').hide();
-        list_update_room();
-        return false;
-    });
-
-    // При нажатии на ссылку удаления номеров для проживания
-    $('#a_delete_room').click(function(){
-        $('.card-header').html('Удаление номеров для проживания');
-        hide_form();
-        list_delete_room();
-        return false;
-    });
-
     // При нажатии на ссылку получения статусов
     $('#a_index_room').click(function(){
         $('.card-header').html('Все доступные номера для проживании');
         hide_form();
         index_room();
         return false;
+    })
+
+    $('.close_modal_room').click(function () {
+        localStorage.rel = 3;
+        location.reload();
     })
 
 //=================================================
@@ -2690,21 +1976,6 @@ $(document).ready(function () {
         return false;
     });
 
-    // При нажатии на ссылку редактировать места в номерах
-    $('#a_update_place').click(function(){
-        $('.card-header').html('Редактирование мест в номерах для проживания');
-        list_update_place();
-    });
-
-    // Возращение к списпу редактируемых мест в номерах для проживания
-    $('#back_update_place').click(function(){
-
-        localStorage.rel = 0;
-        $('#form_update_place_ok').hide();
-        list_update_place();
-        return false;
-    });
-
     // При нажатии на ссылку получения статусов
     $('#a_index_place').click(function(){
         $('.card-header').html('Все доступные места в номерах для проживании');
@@ -2713,13 +1984,10 @@ $(document).ready(function () {
         return false;
     })
 
-    // При нажатии на ссылку удаления мест в номерах для проживания
-    $('#a_delete_place').click(function(){
-        $('.card-header').html('Удаление мест в номерах для проживания');
-        hide_form();
-        list_delete_place();
-        return false;
-    });
+    $('.close_modal_place').click(function () {
+        localStorage.rel = 4;
+        location.reload();
+    })
 
 //=================================================
 // --------------------------Карточки бронирования
@@ -2765,34 +2033,8 @@ $(document).ready(function () {
         return false;
     })
 
-    // При нажатии на ссылку подтвердить карточку бронирования
-    $('#a_ok_booking').click(function(){
-        $('.card-header').html('Подтверждение карточек бронирования');
-        hide_form();
-        list_ok_booking();
-        return false;
+    $('.close_modal_booking').click(function () {
+        localStorage.rel = 5;
+        location.reload();
     })
-
-    // При нажатии на ссылку удаления карточек бронирования
-    $('#a_delete_booking').click(function(){
-        $('.card-header').html('Удаление карточек бронирования');
-        hide_form();
-        list_delete_booking();
-        return false;
-    });
-
-    // При нажатии на ссылку редактировать карточки бронирования
-    $('#a_update_booking').click(function(){
-        $('.card-header').html('Редактирование мест в номерах для проживания');
-        list_update_booking();
-    });
-
-    // Возращение к списпу редактируемых карточек бронирования
-    $('#back_update_booking').click(function(){
-
-        localStorage.rel = 0;
-        $('#form_update_booking_ok').hide();
-        list_update_booking();
-        return false;
-    });
 });
