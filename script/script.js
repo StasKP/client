@@ -15,7 +15,7 @@ function hide_form() {
     $('#form_store_category_ok').hide();
     $('#div_category').hide();
     $('#form_update_category').hide();
-    // $('#form_update_category_ok').hide();
+    // $('#form_update_category_ok').hide(   );
 
     //---------!
     // Статусы
