@@ -97,6 +97,7 @@
 }
 
 .submenu a:hover {
+    cursor: pointer;
     background: #b63b4d;
     color: #FFF;
 }

@@ -1,10 +1,12 @@
 // Глобальные переменные
 var api_url = 'http://diplom/api/'; // Адрес сервера
+// var api_url = 'http://moksha.vippo.ru/api/'; // Адрес сервера
 
 // Скрытие форм
 function hide_form() {
     $('#hello').hide();
     $('#no_admin').hide();
+
     $('.error').html('');
 
     //---------!
@@ -65,11 +67,16 @@ function check_user() {
         //Если пользователь авторизирован
         $('.un_auth').hide();                   //Скрыть блоки неавторизированного пользователя
         $('.ok_auth').show();                   //Отобразить блоки доступные авторизированному пользователю
-        $('.nic').append(localStorage.client);  //Вывод имени пользователя
+        $('.nic').html(localStorage.client);  //Вывод имени пользователя
     } else {
         // Если пользователь не авторизирован
         // Скрытие блоков
         $('.ok_auth').hide();           //Скрыть блоки доступные авторизированному пользователю
+    }
+
+    // Проверка на администратора
+    if (localStorage.is_admin == 1) {
+        $('.admin').show();
     }
 }
 
@@ -194,6 +201,9 @@ function login() {
             $('#form-auth').hide(100);
             $('.vpr').hide(100);
             $('.un_auth').hide(100);
+            $('.admin').hide();
+
+            check_user();
 
             //Оторажение блоков
             $('.ok_auth').show(100);
@@ -207,6 +217,7 @@ function login() {
             //Соханение токена и имени в localStorage
             localStorage.setItem('token', data.token);
             localStorage.setItem('client', data.client);
+            localStorage.setItem('is_admin', data.is_admin);
         },
         // Ошибка
         error: function (data) {
@@ -242,6 +253,7 @@ function logout() {
             // Очистка переменных в localStorage
             localStorage.token = ' ';   // Токен
             localStorage.client = ' ';  // Имя пользователя
+            localStorage.is_admin = ' ';  // Права администартора
 
             // Перезагрузка страницы
             location.reload();
@@ -1160,6 +1172,13 @@ function delete_place(id, room_id) {
 
 // Открытие формы создания карточки бронирования
 function open_form_store_booking(){
+
+    check_user();
+
+    if (localStorage.is_admin == 1) {
+        add_client();
+    }
+
     // Ajax запрос к серверу
     $.ajax({
         url: api_url+'category',
@@ -1227,6 +1246,41 @@ function add_room(){
         }
     });
 };
+
+// Заполнение списка пользователей при создании
+function add_client() {
+    $.ajax({
+        url: api_url+'user',
+        headers: {'Authorization': 'Bearer ' + localStorage.token},
+        method: 'GET',
+        success: function (data) {
+            $('#client').html(' ');
+            $.each(data, function (index, value) {
+                $(`#client`).append(`
+					    <option value="${value.id}">${value.client}</option>
+				`);
+            })
+        }
+    })
+}
+
+// Заполнение списка пользователей при редактировании
+function add_new_client() {
+    $.ajax({
+        url: api_url+'user',
+        headers: {'Authorization': 'Bearer ' + localStorage.token},
+        method: 'GET',
+        success: function (data) {
+            $('#new_client').html(' ');
+            $.each(data, function (index, value) {
+                $(`#new_client`).append(`
+					    <option value="${value.id}">${value.client}</option>
+				`);
+            })
+        }
+    })
+
+}
 
 // Функция создания карточки бронирования
 function store_booking() {
@@ -1527,6 +1581,11 @@ function delete_booking(id) {
 
 // Функция открытия формы редактирования карточки бронирования
 function form_update_booking(id) {
+
+    if (localStorage.is_admin == 1) {
+        add_new_client();
+    }
+
     // Ajax запрос к серверу
     $.ajax({
         url: api_url+`booking/${id}`,
@@ -1538,6 +1597,7 @@ function form_update_booking(id) {
             $('#div_booking').show();
             $('#modal_update_booking').modal('show');
             $('#form_update_booking').show(1000);
+            document.getElementById('new_client').value = data.client;
             // Ajax запрос к серверу
             $.ajax({
                 url: api_url+'category',
@@ -1740,6 +1800,7 @@ $(document).ready(function () {
 
     // alert(localStorage.token);
 
+    $('.admin').hide();
     check_user();
     hide_form();
     $('#hello').show();

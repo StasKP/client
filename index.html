@@ -16,7 +16,7 @@
         <!--    Шапка-->
         <nav class="navbar navbar-expand-md navbar-dark bg-dark shadow-sm">
             <div class="container">
-                <a class="navbar-brand" href="/">
+                <a class="navbar-brand" href="">
                     Санаторий "Мокша"
                 </a>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -794,6 +794,15 @@
 
                             <!--Форма создания карточки бронирования-->
                             <form id="form_store_booking">
+                                <!--Клиент-->
+                                <div class="form-group admin">
+                                    <div class="col-md-12">
+                                        <select class="form-control" name="client" id="client">
+
+                                        </select>
+                                        <small class="error e_client form-text text-danger"></small>
+                                    </div>
+                                </div>
                                 <!--Категория номера-->
                                 <div class="form-group">
                                     <div class="col-md-12">
@@ -888,6 +897,15 @@
                                         <!-- Основное содержимое модального окна -->
                                         <div class="modal-body">
                                             <form id="form_update_booking">
+                                                <!--Клиент-->
+                                                <div class="form-group admin">
+                                                    <div class="col-md-12">
+                                                        <select class="form-control" name="client" id="new_client">
+
+                                                        </select>
+                                                        <small class="error e_client form-text text-danger"></small>
+                                                    </div>
+                                                </div>
                                                 <!--Категория номера-->
                                                 <div class="form-group">
                                                     <div class="col-md-12">
